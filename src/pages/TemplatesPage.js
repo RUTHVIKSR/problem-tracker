@@ -176,19 +176,19 @@ const TemplatesPage = () => {
 
       <div className="templates-grid">
         {state.templates.map((template, index) => {
-          const isExpanded = expandedTemplates.has(index);
+          const isExpanded = expandedTemplates.has(index);          
+          // Helper to stop click events from bubbling up to the card
+          const stopPropagation = (e) => e.stopPropagation();
+      
           return (
-            <div key={index} className="template-card">
-              <div className="template-header">
+            <div 
+              key={index} 
+              className={`template-card ${isExpanded ? 'expanded' : ''}`}
+              onClick={() => toggleExpanded(index)} // Card is now clickable
+            >
+              <div className="template-header" onClick={stopPropagation}>
                 <h3 className="template-title">{template.title}</h3>
                 <div className="template-actions">
-                  <button
-                    className="expand-btn"
-                    onClick={() => toggleExpanded(index)}
-                    title={isExpanded ? 'Hide code' : 'Show code'}
-                  >
-                    {isExpanded ? '▼' : '▶'}
-                  </button>
                   <button
                     className="delete-template-btn"
                     onClick={() => handleDelete(index)}
@@ -199,10 +199,10 @@ const TemplatesPage = () => {
                 </div>
               </div>
               
-              <div className="template-info">
+              <div className="template-info" onClick={stopPropagation}>
                 <div className="template-meta">
                   <button
-                    className={`template-status ${template.status || 'to-do'} clickable-status`}
+                    className={`template-status ${template.status || 'to-do'}`}
                     onClick={() => openStatusModal(index)}
                     title="Click to update status"
                   >
@@ -213,20 +213,14 @@ const TemplatesPage = () => {
                     <div className="freq-controls">
                       <button
                         className="freq-btn freq-decrease"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          updateFrequency(index, -1);
-                        }}
+                        onClick={() => updateFrequency(index, -1)}
                         title="Decrease frequency"
                       >
                         −
                       </button>
                       <button
                         className="freq-btn freq-increase"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          updateFrequency(index, 1);
-                        }}
+                        onClick={() => updateFrequency(index, 1)}
                         title="Increase frequency"
                       >
                         +
@@ -236,30 +230,34 @@ const TemplatesPage = () => {
                 </div>
               </div>
               
+              {/* Collapsed View: Show code preview */}
               {!isExpanded && (
                 <div className="template-preview">
-                  <button 
-                    className="view-code-btn"
-                    onClick={() => toggleExpanded(index)}
-                  >
-                    View Code
-                  </button>
+                  <pre className="code-block-preview">
+                    <code>
+                      {template.code ? template.code.substring(0, 200) + (template.code.length > 200 ? '...' : '') : 'No code added yet.'}
+                    </code>
+                  </pre>
                 </div>
               )}
               
+              {/* Expanded View: Show full code */}
               {isExpanded && (
                 <div className="template-code-section">
                   <div className="code-header">
                     <span className="code-label">Code</span>
                     <button
                       className="copy-code-btn"
-                      onClick={() => copyToClipboard(template.code)}
+                      onClick={(e) => {
+                          stopPropagation(e);
+                          copyToClipboard(template.code);
+                      }}
                       title="Copy code to clipboard"
                     >
                       📋 Copy
                     </button>
                   </div>
-                  <pre className="code-block">
+                  <pre className="code-block" onClick={stopPropagation}>
                     <code>{template.code}</code>
                   </pre>
                 </div>

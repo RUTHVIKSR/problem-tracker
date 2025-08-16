@@ -5,6 +5,8 @@ import Modal from '../components/Modal';
 const ProblemsPage = () => {
   const { state, actions } = useApp();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editIndex, setEditIndex] = useState(null);
   const [formData, setFormData] = useState({
     link: '',
     problemId: '',
@@ -118,7 +120,17 @@ const ProblemsPage = () => {
       ...formData,
       id: formData.problemId // Use the converted problem ID
     };
-    actions.addProblem(problemData);
+    
+    if (isEditMode) {
+      actions.updateProblem(editIndex, problemData);
+    } else {
+      actions.addProblem(problemData);
+    }
+    
+    resetForm();
+  };
+
+  const resetForm = () => {
     setFormData({
       link: '',
       problemId: '',
@@ -130,6 +142,8 @@ const ProblemsPage = () => {
       analysis: ''
     });
     setIsModalOpen(false);
+    setIsEditMode(false);
+    setEditIndex(null);
   };
 
   const handleDelete = (index) => {
@@ -138,22 +152,29 @@ const ProblemsPage = () => {
     }
   };
 
+  const handleEdit = (index) => {
+    const problem = state.problems[index];
+    setFormData({
+      link: problem.link,
+      problemId: problem.id,
+      difficulty: problem.difficulty,
+      status: problem.status,
+      patterns: problem.patterns,
+      metacognition: problem.metacognition,
+      takeaways: problem.takeaways,
+      analysis: problem.analysis
+    });
+    setIsEditMode(true);
+    setEditIndex(index);
+    setIsModalOpen(true);
+  };
+
   const openModal = () => {
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
-    setIsModalOpen(false);
-    setFormData({
-      link: '',
-      problemId: '',
-      difficulty: '',
-      status: 'Complete',
-      patterns: [],
-      metacognition: '',
-      takeaways: '',
-      analysis: ''
-    });
+    resetForm();
   };
 
   // Helper functions for styling tags
@@ -189,7 +210,7 @@ const ProblemsPage = () => {
 
         <Modal isOpen={isModalOpen} onClose={closeModal}>
           <form className="problem-form" onSubmit={handleSubmit}>
-            <h2>Add a New Problem</h2>
+            <h2>{isEditMode ? 'Edit Problem' : 'Add a New Problem'}</h2>
             <div className="form-grid">
               <div className="link-input-container">
                 <input
@@ -258,7 +279,7 @@ const ProblemsPage = () => {
                 className="medium-textarea"
               />
             </div>
-            <button type="submit">Add Problem</button>
+            <button type="submit">{isEditMode ? 'Update Problem' : 'Add Problem'}</button>
           </form>
         </Modal>
       </div>
@@ -274,16 +295,33 @@ const ProblemsPage = () => {
               <th className="metacognition-col">Metacognition</th>
               <th className="takeaway-col">Takeaway</th>
               <th className="analysis-col">Analysis</th>
-              <th className="actions-col">Actions</th>
             </tr>
           </thead>
           <tbody>
             {state.problems.map((problem, index) => (
               <tr key={index}>
                 <td className="problem-col">
-                  <a href={problem.link} target="_blank" rel="noopener noreferrer" className="problem-link">
-                    {problem.id}
-                  </a>
+                  <div className="problem-cell">
+                    <a href={problem.link} target="_blank" rel="noopener noreferrer" className="problem-link">
+                      {problem.id}
+                    </a>
+                    <div className="problem-actions">
+                      <button
+                        className="edit-icon"
+                        onClick={() => handleEdit(index)}
+                        title="Edit this problem"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        className="delete-icon"
+                        onClick={() => handleDelete(index)}
+                        title="Delete this problem"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  </div>
                 </td>
                 <td className="difficulty-col">
                   <span className={`difficulty-tag ${getDifficultyClass(problem.difficulty)}`}>
@@ -310,15 +348,6 @@ const ProblemsPage = () => {
                   <div className="cell-content" title={problem.analysis}>
                     {problem.analysis}
                   </div>
-                </td>
-                <td className="actions-col">
-                  <button
-                    className="delete-btn"
-                    onClick={() => handleDelete(index)}
-                    title="Delete this problem"
-                  >
-                    ×
-                  </button>
                 </td>
               </tr>
             ))}

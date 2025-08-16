@@ -13,6 +13,7 @@ const actionTypes = {
   SET_THEME: 'SET_THEME',
   SET_PROBLEMS: 'SET_PROBLEMS',
   ADD_PROBLEM: 'ADD_PROBLEM',
+  UPDATE_PROBLEM: 'UPDATE_PROBLEM',
   DELETE_PROBLEM: 'DELETE_PROBLEM',
   SET_PATTERNS: 'SET_PATTERNS',
   ADD_PATTERN: 'ADD_PATTERN',
@@ -31,6 +32,13 @@ const appReducer = (state, action) => {
       return { ...state, problems: action.payload };
     case actionTypes.ADD_PROBLEM:
       return { ...state, problems: [...state.problems, action.payload] };
+    case actionTypes.UPDATE_PROBLEM:
+      return {
+        ...state,
+        problems: state.problems.map((problem, index) => 
+          index === action.payload.index ? action.payload.problem : problem
+        )
+      };
     case actionTypes.DELETE_PROBLEM:
       return {
         ...state,
@@ -120,6 +128,7 @@ export const AppProvider = ({ children }) => {
   const actions = {
     setTheme: (theme) => dispatch({ type: actionTypes.SET_THEME, payload: theme }),
     addProblem: (problem) => dispatch({ type: actionTypes.ADD_PROBLEM, payload: problem }),
+    updateProblem: (index, problem) => dispatch({ type: actionTypes.UPDATE_PROBLEM, payload: { index, problem } }),
     deleteProblem: (index) => dispatch({ type: actionTypes.DELETE_PROBLEM, payload: index }),
     addPattern: (pattern) => {
       if (!state.patterns.includes(pattern)) {

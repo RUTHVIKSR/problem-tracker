@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <nav class="navbar">
+        <a href="index.html" class="active">Problems</a>
+        <a href="patterns.html">Patterns</a>
+        <a href="templates.html">Templates</a>
+    </nav>
+
     <div class="theme-switcher-container">
         <span>Dark Mode</span>
         <label class="switch">
@@ -29,8 +35,12 @@
                 <div class="form-grid">
                     <input type="text" id="problem-id" placeholder="Problem (e.g., 1427E)" required>
                     <input type="number" id="problem-difficulty" placeholder="Difficulty (e.g., 2500)">
-                    <input type="text" id="problem-status" placeholder="Status (e.g., Complete)" required>
-                    <input type="text" id="problem-topics" placeholder="Topics (e.g., gcd, math)">
+                    <select id="problem-status" required>
+                        <option value="Complete">Complete</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="To Do">To Do</option>
+                    </select>
+                    <select id="problem-patterns" multiple placeholder="Select Patterns"></select>
                     <textarea id="problem-metacognition" placeholder="Metacognition"></textarea>
                     <textarea id="problem-takeaways" placeholder="Takeaways"></textarea>
                     <textarea id="problem-analysis" placeholder="Analysis"></textarea>
@@ -49,11 +59,9 @@
                 <th>Problem</th>
                 <th>Difficulty</th>
                 <th>Status</th>
-                <th>Topics</th>
-                <th>Metacognition</th>
-                <th>Takeaways</th>
+                <th>Patterns</th>
                 <th>Analysis</th>
-            </tr>
+                <th>Actions</th> </tr>
         </thead>
         <tbody id="problems-table-body">
             </tbody>

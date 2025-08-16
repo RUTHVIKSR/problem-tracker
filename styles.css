@@ -42,14 +42,45 @@ h1, h2 {
     text-align: center;
 }
 
+hr {
+    border: none;
+    border-top: 1px solid var(--table-border-color);
+    margin: 2rem 0;
+}
+
+/* --- Navigation Bar --- */
+.navbar {
+    background-color: var(--card-bg-color);
+    box-shadow: 0 2px 5px var(--box-shadow-color);
+    padding: 1rem 2rem;
+    margin: -2rem -2rem 2rem -2rem; /* Stretch to edges */
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+}
+.navbar a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+.navbar a.active, .navbar a:hover {
+    background-color: var(--button-bg-color);
+    color: white;
+}
+
 /* --- Theme Switcher --- */
 .theme-switcher-container {
     position: absolute;
-    top: 1rem;
+    top: 1.75rem;
     right: 1rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    z-index: 10;
 }
 .switch {
     position: relative;
@@ -80,7 +111,7 @@ input:checked + .slider:before { transform: translateX(26px); }
 
 /* --- Modal Styles --- */
 .modal {
-    display: none; /* Hidden by default */
+    display: none;
     position: fixed;
     z-index: 1000;
     left: 0; top: 0;
@@ -111,7 +142,7 @@ input:checked + .slider:before { transform: translateX(26px); }
 .close-btn:hover, .close-btn:focus { color: var(--text-color); }
 
 /* Form Styling */
-#problem-form {
+#problem-form, #template-form {
     padding: 0;
     box-shadow: none;
     margin-bottom: 0;
@@ -121,10 +152,10 @@ input:checked + .slider:before { transform: translateX(26px); }
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1rem;
 }
-input, textarea {
+input, textarea, select {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--table-border-color);
     border-radius: 4px;
     box-sizing: border-box;
     background-color: var(--bg-color);
@@ -134,7 +165,14 @@ textarea {
     grid-column: 1 / -1;
     height: 80px;
     resize: vertical;
+    font-family: inherit;
 }
+#template-code {
+    min-height: 200px;
+    font-family: 'Courier New', Courier, monospace;
+}
+#problem-patterns { min-height: 80px; }
+
 
 /* Button Styling */
 button {
@@ -163,7 +201,6 @@ button:hover {
     padding: 0.75rem 2rem;
 }
 
-
 /* Table Styling */
 #problems-table {
     width: 100%;
@@ -187,3 +224,90 @@ tbody tr:nth-child(even) {
 tbody tr:hover {
     background-color: var(--table-hover-row-bg);
 }
+
+/* --- Patterns Page --- */
+#add-pattern-form {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+#add-pattern-form input {
+    flex-grow: 1;
+}
+#add-pattern-form button {
+    width: auto;
+    padding: 0.75rem 1.5rem;
+    margin-top: 0;
+}
+#patterns-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.pattern-tag {
+    background-color: var(--card-bg-color);
+    padding: 0.75rem 1.25rem;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px var(--box-shadow-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.delete-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-weight: bold;
+    line-height: 24px;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+
+/* --- Templates Page --- */
+#templates-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+.template-card {
+    background: var(--card-bg-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 10px var(--box-shadow-color);
+}
+.template-card h3 {
+    margin-top: 0;
+    color: var(--header-color);
+    display: flex;
+    justify-content: space-between;
+}
+.template-card pre {
+    background: var(--bg-color);
+    padding: 1rem;
+    border-radius: 5px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-height: 300px;
+    overflow-y: auto;
+}
+.template-card code {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* --- General Action Buttons --- */
+.action-btn {
+    padding: 5px 10px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    width: auto;
+    margin-top: 0;
+}
+.delete-problem-btn { background-color: #e74c3c; }

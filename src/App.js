@@ -13,8 +13,11 @@ function App() {
     <AppProvider>
       <Router>
         <div className="App">
+          <div className="app-header">
+            <h1>Problem Tracker</h1>
+            <ThemeSwitcher />
+          </div>
           <Navbar />
-          <ThemeSwitcher />
           <Routes>
             <Route path="/" element={<ProblemsPage />} />
             <Route path="/patterns" element={<PatternsPage />} />

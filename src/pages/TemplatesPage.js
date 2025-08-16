@@ -47,11 +47,10 @@ const TemplatesPage = () => {
   };
 
   return (
-    <div>
-      <h1>Code Templates</h1>
-
-      <div className="add-problem-container">
-        <button className="open-modal-btn" onClick={openModal}>
+    <div className="content-wrapper">
+      <div className="page-header">
+        <h2>Templates</h2>
+        <button className="add-button" onClick={openModal}>
           Add New Template
         </button>
       </div>
@@ -78,7 +77,7 @@ const TemplatesPage = () => {
         </form>
       </Modal>
 
-      <h2>Saved Templates</h2>
+
       <div className="templates-container">
         {state.templates.map((template, index) => (
           <div key={index} className="template-card">

@@ -5,8 +5,7 @@ const PatternsPage = () => {
   const { state, actions } = useApp();
   const [newPattern, setNewPattern] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     const trimmedPattern = newPattern.trim();
     if (trimmedPattern) {
       actions.addPattern(trimmedPattern);
@@ -19,21 +18,22 @@ const PatternsPage = () => {
   };
 
   return (
-    <div>
-      <h1>Manage Patterns</h1>
-
-      <form className="add-pattern-form" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={newPattern}
-          onChange={(e) => setNewPattern(e.target.value)}
-          placeholder="Enter new pattern name (e.g., Dynamic Programming)"
-          required
-        />
-        <button type="submit">Add Pattern</button>
-      </form>
-
-      <h2>Existing Patterns</h2>
+    <div className="content-wrapper">
+      <div className="page-header">
+        <h2>Patterns</h2>
+        <div className="add-pattern-inline">
+          <input
+            type="text"
+            value={newPattern}
+            onChange={(e) => setNewPattern(e.target.value)}
+            placeholder="Enter new pattern name"
+            required
+          />
+          <button type="button" onClick={handleSubmit} className="add-button">
+            Add Pattern
+          </button>
+        </div>
+      </div>
       <div className="patterns-list">
         {state.patterns.map((pattern, index) => (
           <div key={index} className="pattern-tag">

@@ -23,10 +23,14 @@ const ProblemsPage = () => {
       const hostname = url.hostname.toLowerCase();
       
       if (hostname.includes('leetcode')) {
-        // Extract problem number from LeetCode URL
-        const match = link.match(/\/problems\/[^\/]*-(\d+)\//);
+        // Extract problem slug from LeetCode URL
+        const match = link.match(/\/problems\/([^\/\?#]+)/);
         if (match) {
-          return `LC${match[1]}`;
+          let problemSlug = match[1];
+          // Remove trailing slash and any query parameters
+          problemSlug = problemSlug.replace(/\/$/, '').split('?')[0].split('#')[0];
+          console.log('LeetCode problem slug extracted:', problemSlug); // Debug log
+          return problemSlug;
         }
         // Fallback for different URL patterns
         const pathMatch = url.pathname.match(/\/(\d+)\//);
@@ -270,6 +274,7 @@ const ProblemsPage = () => {
               <th className="metacognition-col">Metacognition</th>
               <th className="takeaway-col">Takeaway</th>
               <th className="analysis-col">Analysis</th>
+              <th className="actions-col">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -305,6 +310,15 @@ const ProblemsPage = () => {
                   <div className="cell-content" title={problem.analysis}>
                     {problem.analysis}
                   </div>
+                </td>
+                <td className="actions-col">
+                  <button
+                    className="delete-btn"
+                    onClick={() => handleDelete(index)}
+                    title="Delete this problem"
+                  >
+                    ×
+                  </button>
                 </td>
               </tr>
             ))}

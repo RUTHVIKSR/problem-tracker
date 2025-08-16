@@ -399,6 +399,10 @@ th, td {
     text-align: left;
     vertical-align: top;
     border-bottom: 1px solid var(--table-border-color);
+    border-right: 1px solid var(--table-border-color);
+}
+th:last-child, td:last-child {
+    border-right: none;
 }
 th {
     background: var(--table-header-bg);
@@ -410,6 +414,7 @@ th {
     position: sticky;
     top: 0;
     z-index: 10;
+    border-bottom: 2px solid var(--table-border-color);
 }
 tbody tr {
     transition: all 0.2s ease;
@@ -436,16 +441,21 @@ tbody tr:hover {
     min-width: 120px;
 }
 .metacognition-col {
-    width: 25%;
-    min-width: 200px;
+    width: 22%;
+    min-width: 180px;
 }
 .takeaway-col {
-    width: 18%;
-    min-width: 150px;
+    width: 16%;
+    min-width: 130px;
 }
 .analysis-col {
-    width: 19%;
-    min-width: 150px;
+    width: 16%;
+    min-width: 130px;
+}
+.actions-col {
+    width: 8%;
+    min-width: 80px;
+    text-align: center;
 }
 
 /* Cell content styling */
@@ -547,6 +557,30 @@ tbody tr:hover {
 .delete-btn:hover {
     background: var(--danger-color);
     color: white;
+}
+
+/* Delete button in table */
+.actions-col .delete-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 16px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    background: rgba(255, 59, 48, 0.1);
+    color: var(--danger-color);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.actions-col .delete-btn:hover {
+    background: var(--danger-color);
+    color: white;
+    transform: scale(1.05);
 }
 
 /* --- Templates Page --- */

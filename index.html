@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CP Problem Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="theme-switcher-container">
+        <span>Dark Mode</span>
+        <label class="switch">
+            <input type="checkbox" id="theme-switcher">
+            <span class="slider round"></span>
+        </label>
+    </div>
+
+    <h1>Competitive Programming Problem Tracker</h1>
+
+    <div class="add-problem-container">
+        <button id="open-modal-btn">Add New Problem</button>
+    </div>
+
+    <div id="problem-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <form id="problem-form">
+                <h2>Add a New Entry</h2>
+                <div class="form-grid">
+                    <input type="text" id="problem-id" placeholder="Problem (e.g., 1427E)" required>
+                    <input type="number" id="problem-difficulty" placeholder="Difficulty (e.g., 2500)">
+                    <input type="text" id="problem-status" placeholder="Status (e.g., Complete)" required>
+                    <input type="text" id="problem-topics" placeholder="Topics (e.g., gcd, math)">
+                    <textarea id="problem-metacognition" placeholder="Metacognition"></textarea>
+                    <textarea id="problem-takeaways" placeholder="Takeaways"></textarea>
+                    <textarea id="problem-analysis" placeholder="Analysis"></textarea>
+                </div>
+                <button type="submit">Add Problem</button>
+            </form>
+        </div>
+    </div>
+
+    <hr>
+
+    <h2>Solved Problems</h2>
+    <table id="problems-table">
+        <thead>
+            <tr>
+                <th>Problem</th>
+                <th>Difficulty</th>
+                <th>Status</th>
+                <th>Topics</th>
+                <th>Metacognition</th>
+                <th>Takeaways</th>
+                <th>Analysis</th>
+            </tr>
+        </thead>
+        <tbody id="problems-table-body">
+            </tbody>
+    </table>
+
+    <script src="script.js"></script>
+</body>
+</html>

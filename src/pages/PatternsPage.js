@@ -17,7 +17,7 @@ const PatternsPage = () => {
   const handleDelete = (index) => {
     actions.deletePattern(index);
     // If the deleted pattern was selected, clear selection
-    if (selectedPattern === state.patterns[index]) {
+    if (selectedPattern && selectedPattern.name && state.patterns[index] && state.patterns[index].name === selectedPattern.name) {
       setSelectedPattern(null);
     }
   };
@@ -27,7 +27,8 @@ const PatternsPage = () => {
   };
 
   const handleCopyPatterns = async () => {
-    const patternsList = state.patterns.join('\n');
+    const validPatterns = state.patterns.filter(p => p && p.name);
+    const patternsList = validPatterns.map(p => `${p.name} (Freq: ${p.frequency || 0})`).join('\n');
     try {
       await navigator.clipboard.writeText(patternsList);
       // You could add a toast notification here if desired
@@ -38,8 +39,8 @@ const PatternsPage = () => {
   };
 
   // Filter problems by selected pattern
-  const filteredProblems = selectedPattern 
-    ? state.problems.filter(problem => problem.patterns.includes(selectedPattern))
+  const filteredProblems = selectedPattern && selectedPattern.name
+    ? state.problems.filter(problem => problem.patterns && Array.isArray(problem.patterns) && problem.patterns.includes(selectedPattern.name))
     : [];
 
   // Helper functions for styling tags (copied from ProblemsPage)
@@ -93,31 +94,63 @@ const PatternsPage = () => {
             </button>
           </div>
           <div className="patterns-list">
-            {state.patterns.map((pattern, index) => (
+            {state.patterns.filter(pattern => pattern && pattern.name).map((pattern, index) => (
               <div 
                 key={index} 
-                className={`pattern-item ${selectedPattern === pattern ? 'selected' : ''}`}
+                className={`pattern-item ${selectedPattern && selectedPattern.name === pattern.name ? 'selected' : ''}`}
                 onClick={() => handlePatternSelect(pattern)}
               >
-                <span className="pattern-name">{pattern}</span>
-                <button
-                  className="delete-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDelete(index);
-                  }}
-                >
-                  ×
-                </button>
+                                 <div className="pattern-info">
+                   <span className="pattern-name">{pattern.name}</span>
+                   <div className="pattern-frequency">
+                     <span className="freq-number">{pattern.frequency || 0}</span>
+                   </div>
+                 </div>
+                <div className="pattern-controls">
+                  <button
+                    className="freq-btn freq-decrease"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      actions.updatePatternFreq(index, -1);
+                    }}
+                    title="Decrease frequency"
+                  >
+                    −
+                  </button>
+                  <button
+                    className="freq-btn freq-increase"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      actions.updatePatternFreq(index, 1);
+                    }}
+                    title="Increase frequency"
+                  >
+                    +
+                  </button>
+                  <button
+                    className="delete-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(index);
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
               </div>
             ))}
+            {state.patterns.filter(pattern => pattern && pattern.name).length === 0 && (
+              <div className="no-patterns">
+                <p>No patterns added yet. Add your first pattern above!</p>
+              </div>
+            )}
           </div>
         </div>
         
         <div className="patterns-content">
           {selectedPattern ? (
             <>
-              <h3>Problems using "{selectedPattern}"</h3>
+              <h3>Problems using "{selectedPattern.name}"</h3>
               {filteredProblems.length > 0 ? (
                 <div className="filtered-problems">
                   {filteredProblems.map((problem, index) => (

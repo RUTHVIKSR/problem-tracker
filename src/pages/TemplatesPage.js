@@ -6,9 +6,13 @@ const TemplatesPage = () => {
   const { state, actions } = useApp();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [expandedTemplates, setExpandedTemplates] = useState(new Set());
+  const [statusModalOpen, setStatusModalOpen] = useState(false);
+  const [editingTemplateIndex, setEditingTemplateIndex] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
-    code: ''
+    code: '',
+    status: 'to-do',
+    frequency: 0
   });
 
   const handleInputChange = (e) => {
@@ -24,7 +28,9 @@ const TemplatesPage = () => {
     actions.addTemplate(formData);
     setFormData({
       title: '',
-      code: ''
+      code: '',
+      status: 'to-do',
+      frequency: 0
     });
     setIsModalOpen(false);
   };
@@ -54,6 +60,27 @@ const TemplatesPage = () => {
     }
   };
 
+  const openStatusModal = (index) => {
+    setEditingTemplateIndex(index);
+    setStatusModalOpen(true);
+  };
+
+  const closeStatusModal = () => {
+    setStatusModalOpen(false);
+    setEditingTemplateIndex(null);
+  };
+
+  const updateStatus = (status) => {
+    if (editingTemplateIndex !== null) {
+      actions.updateTemplateStatus(editingTemplateIndex, status);
+      closeStatusModal();
+    }
+  };
+
+  const updateFrequency = (index, delta) => {
+    actions.updateTemplateFreq(index, delta);
+  };
+
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -62,7 +89,9 @@ const TemplatesPage = () => {
     setIsModalOpen(false);
     setFormData({
       title: '',
-      code: ''
+      code: '',
+      status: 'to-do',
+      frequency: 0
     });
   };
 
@@ -86,6 +115,17 @@ const TemplatesPage = () => {
             placeholder="Template Title (e.g., Sieve of Eratosthenes)"
             required
           />
+          <select
+            name="status"
+            value={formData.status}
+            onChange={handleInputChange}
+            required
+          >
+            <option value="to-do">To Do</option>
+            <option value="in-progress">In Progress</option>
+            <option value="revise">Revise</option>
+            <option value="memorized">Memorized</option>
+          </select>
           <textarea
             name="code"
             value={formData.code}
@@ -95,6 +135,42 @@ const TemplatesPage = () => {
           />
           <button type="submit">Save Template</button>
         </form>
+      </Modal>
+
+      <Modal isOpen={statusModalOpen} onClose={closeStatusModal}>
+        <div className="status-modal">
+          <h2>Update Template Status</h2>
+          <div className="status-options">
+            <button 
+              type="button" 
+              className="status-option to-do"
+              onClick={() => updateStatus('to-do')}
+            >
+              To Do
+            </button>
+            <button 
+              type="button" 
+              className="status-option in-progress"
+              onClick={() => updateStatus('in-progress')}
+            >
+              In Progress
+            </button>
+            <button 
+              type="button" 
+              className="status-option revise"
+              onClick={() => updateStatus('revise')}
+            >
+              Revise
+            </button>
+            <button 
+              type="button" 
+              className="status-option memorized"
+              onClick={() => updateStatus('memorized')}
+            >
+              Memorized
+            </button>
+          </div>
+        </div>
       </Modal>
 
 
@@ -123,12 +199,45 @@ const TemplatesPage = () => {
                 </div>
               </div>
               
+              <div className="template-info">
+                <div className="template-meta">
+                  <button
+                    className={`template-status ${template.status || 'to-do'} clickable-status`}
+                    onClick={() => openStatusModal(index)}
+                    title="Click to update status"
+                  >
+                    {template.status || 'to-do'}
+                  </button>
+                  <div className="template-frequency">
+                    <span className="freq-number">{template.frequency || 0}</span>
+                    <div className="freq-controls">
+                      <button
+                        className="freq-btn freq-decrease"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          updateFrequency(index, -1);
+                        }}
+                        title="Decrease frequency"
+                      >
+                        −
+                      </button>
+                      <button
+                        className="freq-btn freq-increase"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          updateFrequency(index, 1);
+                        }}
+                        title="Increase frequency"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
               {!isExpanded && (
                 <div className="template-preview">
-                  <p className="code-preview">
-                    {template.code.split('\n')[0].substring(0, 100)}
-                    {template.code.length > 100 ? '...' : ''}
-                  </p>
                   <button 
                     className="view-code-btn"
                     onClick={() => toggleExpanded(index)}

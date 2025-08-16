@@ -17,9 +17,12 @@ const actionTypes = {
   DELETE_PROBLEM: 'DELETE_PROBLEM',
   SET_PATTERNS: 'SET_PATTERNS',
   ADD_PATTERN: 'ADD_PATTERN',
+  UPDATE_PATTERN_FREQ: 'UPDATE_PATTERN_FREQ',
   DELETE_PATTERN: 'DELETE_PATTERN',
   SET_TEMPLATES: 'SET_TEMPLATES',
   ADD_TEMPLATE: 'ADD_TEMPLATE',
+  UPDATE_TEMPLATE_STATUS: 'UPDATE_TEMPLATE_STATUS',
+  UPDATE_TEMPLATE_FREQ: 'UPDATE_TEMPLATE_FREQ',
   DELETE_TEMPLATE: 'DELETE_TEMPLATE'
 };
 
@@ -48,6 +51,15 @@ const appReducer = (state, action) => {
       return { ...state, patterns: action.payload };
     case actionTypes.ADD_PATTERN:
       return { ...state, patterns: [...state.patterns, action.payload] };
+    case actionTypes.UPDATE_PATTERN_FREQ:
+      return {
+        ...state,
+        patterns: state.patterns.map((pattern, index) => 
+          index === action.payload.index 
+            ? { ...pattern, frequency: Math.max(0, pattern.frequency + action.payload.delta) }
+            : pattern
+        )
+      };
     case actionTypes.DELETE_PATTERN:
       return {
         ...state,
@@ -57,6 +69,24 @@ const appReducer = (state, action) => {
       return { ...state, templates: action.payload };
     case actionTypes.ADD_TEMPLATE:
       return { ...state, templates: [...state.templates, action.payload] };
+    case actionTypes.UPDATE_TEMPLATE_STATUS:
+      return {
+        ...state,
+        templates: state.templates.map((template, index) => 
+          index === action.payload.index 
+            ? { ...template, status: action.payload.status }
+            : template
+        )
+      };
+    case actionTypes.UPDATE_TEMPLATE_FREQ:
+      return {
+        ...state,
+        templates: state.templates.map((template, index) => 
+          index === action.payload.index 
+            ? { ...template, frequency: Math.max(0, template.frequency + action.payload.delta) }
+            : template
+        )
+      };
     case actionTypes.DELETE_TEMPLATE:
       return {
         ...state,
@@ -100,9 +130,22 @@ export const AppProvider = ({ children }) => {
     const savedPatterns = getFromStorage('patterns');
     const savedTemplates = getFromStorage('templates');
 
+    // Migrate patterns from old string format to new object format
+    const migratedPatterns = savedPatterns.map(pattern => {
+      if (typeof pattern === 'string') {
+        return { name: pattern, frequency: 0 };
+      }
+      // Ensure pattern has the correct structure
+      if (pattern && typeof pattern === 'object' && pattern.name) {
+        return { name: pattern.name, frequency: pattern.frequency || 0 };
+      }
+      // Fallback for malformed patterns
+      return { name: 'Unknown Pattern', frequency: 0 };
+    });
+
     dispatch({ type: actionTypes.SET_THEME, payload: savedTheme });
     dispatch({ type: actionTypes.SET_PROBLEMS, payload: savedProblems });
-    dispatch({ type: actionTypes.SET_PATTERNS, payload: savedPatterns });
+    dispatch({ type: actionTypes.SET_PATTERNS, payload: migratedPatterns });
     dispatch({ type: actionTypes.SET_TEMPLATES, payload: savedTemplates });
   }, []);
 
@@ -131,12 +174,15 @@ export const AppProvider = ({ children }) => {
     updateProblem: (index, problem) => dispatch({ type: actionTypes.UPDATE_PROBLEM, payload: { index, problem } }),
     deleteProblem: (index) => dispatch({ type: actionTypes.DELETE_PROBLEM, payload: index }),
     addPattern: (pattern) => {
-      if (!state.patterns.includes(pattern)) {
-        dispatch({ type: actionTypes.ADD_PATTERN, payload: pattern });
+      if (!state.patterns.some(p => p.name === pattern)) {
+        dispatch({ type: actionTypes.ADD_PATTERN, payload: { name: pattern, frequency: 0 } });
       }
     },
+    updatePatternFreq: (index, delta) => dispatch({ type: actionTypes.UPDATE_PATTERN_FREQ, payload: { index, delta } }),
     deletePattern: (index) => dispatch({ type: actionTypes.DELETE_PATTERN, payload: index }),
     addTemplate: (template) => dispatch({ type: actionTypes.ADD_TEMPLATE, payload: template }),
+    updateTemplateStatus: (index, status) => dispatch({ type: actionTypes.UPDATE_TEMPLATE_STATUS, payload: { index, status } }),
+    updateTemplateFreq: (index, delta) => dispatch({ type: actionTypes.UPDATE_TEMPLATE_FREQ, payload: { index, delta } }),
     deleteTemplate: (index) => dispatch({ type: actionTypes.DELETE_TEMPLATE, payload: index })
   };
 
